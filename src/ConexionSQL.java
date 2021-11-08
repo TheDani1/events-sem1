@@ -7,11 +7,11 @@ public class ConexionSQL {
     private Statement st;
 
     //DriverManager.registerDriver( new oracle.jdbc.driver.OracleDriver() );
-    public boolean conectar(String host, String nombre_bd, String user, String contra) {
+    public boolean conectar(String host, String nombre_bd, String user, String pass) {
 
         try
         {
-            conexion = DriverManager.getConnection("jdbc:oracle:thin:@" + host + ":1521/" + nombre_bd, user, contra);
+            conexion = DriverManager.getConnection("jdbc:oracle:thin:@" + host + ":1521/" + nombre_bd, user, pass);
 
             st = conexion.createStatement();
             System.out.print("-(Conexion genial)- ");
