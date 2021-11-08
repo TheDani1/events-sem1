@@ -1,3 +1,9 @@
+/**
+ * Esta clase se encarga de hacer funcionar el menú grafico y permitir al usuario
+ * navergar por las distintas opciones
+ *
+ */
+
 public class Menu {
 
     //todo no se debería hacer un constructor?
