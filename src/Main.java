@@ -1,8 +1,9 @@
 public class Main {
 
+    static final String host = "oracle0.ugr.es";
+    static final String nombre_bd = "practbd.oracle0.ugr.es";
     static final String user = "x0231215";
     static final String pass = "x0231215";
-    //static boolean conectado = false; //todo usar una variable que controle si hay conexión a la base de datos?
 
     public static void main(String[] args) {
 
@@ -12,7 +13,7 @@ public class Main {
         //CONEXIÓN A LA BASE DE DATOS
         ConexionSQL conexionSQL = new ConexionSQL();
 
-        if (true/*conexionSQL.conectar("oracle0.ugr.es", "practbd.oracle0.ugr.es", user, pass)*/){
+        if (true/*conexionSQL.conectar(host, nombre_bd, user, pass)*/) { //todo quitar para comprobar que se establece la conexión
 
             //LANZAMIENTO DEL MENÚ
             Menu menu = new Menu(conexionSQL); //creamos el menú con la conexión y el statement
@@ -23,5 +24,7 @@ public class Main {
 
         //DESCONEXIÓN DE LA BASE DE DATOS
         conexionSQL.desconectar();
+
+        System.out.println("\nFinalizando programa... ¡Gracias por usar nuestra aplicación!");
     }
 }

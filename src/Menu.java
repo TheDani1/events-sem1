@@ -4,7 +4,6 @@ import java.util.Scanner;
 /**
  * Esta clase se encarga de hacer funcionar el menú grafico y permitir al usuario
  * navergar por las distintas opciones
- *
  */
 
 public class Menu {
@@ -15,138 +14,154 @@ public class Menu {
     private String menuNuevoPedidoStr;
     private String menuMostrarStr;
 
+    /**
+     * Crea una instancia de menú conectado a la Base de Datos establecida por
+     * el parámetro conexionSQL. Este parámetro servirá para que las consultas
+     * sean efectivas. El resto de parámetros son el string que se mostrará
+     * como "Interfaz para el usuario" y que pueda navegar desde la terminal.
+     *
+     * @param conexionSQL Instancia de la conexión a la BD
+     */
     public Menu(ConexionSQL conexionSQL) {
         this.conexionSQL = conexionSQL;
-        menuPrincipalStr =  "MENU PRINCIPAL. Teclee el número de la opción deseada.\n" +
-                            "[1] Borrado y creación de tuplas\n" +
-                            "[2] Dar de alta un nuevo pedido\n" +
-                            "[3] Mostrar tablas\n" +
-                            "[0] Salir del programa y cerrar conexión con la Base de Datos";
+        menuPrincipalStr = """
 
-        menuBorrarCrearStr= "MENÚ PARA BORRAR O CREAR TABLAS\n" +
-                            "[1] Borrar\n" +
-                            "[2] Crear\n" +
-                            "[3] Insertar\n" +
-                            "[0] Volver al menú principal";
+                MENU PRINCIPAL. Teclee el número de la opción deseada.
+                [1] Reiniciar tuplas
+                [2] Dar de alta un nuevo pedido
+                [3] Mostrar tablas
+                [0] Salir del programa y cerrar conexión con la Base de Datos""";
 
-        menuNuevoPedidoStr= "MENU PARA REALIZAR UN NUEVO PEDIDO\n" +
-                            "[1] Añadir detalle del producto\n" +
-                            "[2] Eliminar todos los detalles del producto\n" +
-                            "[3] Cancelar pedido\n" +
-                            "[4] Finalizar pedido";
+        menuNuevoPedidoStr = """
 
+                MENU PARA REALIZAR UN NUEVO PEDIDO. Teclee el número de la opción deseada.
+                [1] Añadir detalle del producto
+                [2] Eliminar todos los detalles del producto
+                [3] Cancelar pedido
+                [4] Finalizar pedido""";
 
-        menuMostrarStr=     "MENU PARA MOSTRAR EL CONTENIDO DE LAS TABLAS";
+        menuBorrarCrearStr = "\nReiniciando tuplas...";
 
+        menuMostrarStr = "\nMostrando las tablas...";
     }
 
-    /** MENÚ PRINCIPAL */
-    public void iniciarMenu(){
+    /**
+     * MENÚ PRINCIPAL. Controla las distintas opciones que la aplicación gestiona.
+     * Muestra el display del Menú Principal para que el usuario sepa qué opciones
+     * tiene. Según la que éste elija, le llevará a otros submenús o funcionalidades.
+     */
+    public void iniciarMenu() {
         boolean fin = false;
-        while(!fin){
+        while (!fin) {
+
             imprimir(menuPrincipalStr); //imprimimos las opciones
 
             int opcion = pedirInput();  //pedimos la opción elegida y la guardamos
 
             switch (opcion) {
-                case 1:
-                    menuBorrarCrear();
-                break;
-
-                case 2:
-                    menuNuevoPedido();
-                    break;
-
-                case 3:
-                    menuMostrar();
-                    break;
-
-                case 0:
-                    fin = true;
+                case 1 -> menuBorrarCrear();
+                case 2 -> menuNuevoPedido();
+                case 3 -> menuMostrar();
+                case 0 -> fin = true;
+                default -> System.out.println("Por favor, inserta un número válido");
             }
         }
     }
 
-    private int pedirInput(){
-
+    /**
+     * Pide usuario que introduzca un numero.
+     *
+     * @return num: Número de la opción elegida por el usuario
+     */
+    private int pedirInput() {
         Scanner input = new Scanner(System.in);
-        int num = input.nextInt();
 
-        System.out.print("\033[H\033[2J");
-        System.out.flush();
+        //todo hacer un sistema de try-catch que detecte que se inserta un número y no cualquier otro caracter
+        int num = input.nextInt();
 
         return num;
     }
 
-    private void imprimir(String menuStr){
+    /**
+     * Imprime la cadena de caracteres que se se le pasa por parámetro
+     * Se hace en un método aparte por si cambia la salida a una interfaz
+     * gráfica en lugar de la terminal.
+     *
+     * @param menuStr String que contiene los caracteres que se desea imprimir
+     */
+    private void imprimir(String menuStr) {
         System.out.println(menuStr);
     }
 
-    private void menuBorrarCrear(){
-        //todo
+    /**
+     * Intenta llamar al método de ConsultasSQL que reinicia las tablas.
+     * En caso de no poder, manda un mensaje de rechazo.
+     */
+    private void menuBorrarCrear() {
+        //todo revisar
 
         imprimir(menuBorrarCrearStr);
-        int opcion = pedirInput();
 
-        switch (opcion) {
-            case 1:
-                //llamar a consulta borrar
-                System.out.println("Borrando...");
-                break;
+        try {
+            ResultSet resultSet = ConsultasSQL.reiniciarTablas(conexionSQL);
+            //todo asegurarse de que no se necesita el resultSet porque no hay que mostrar nada por pantalla
 
-            case 2:
-                //llamar a consulta crear
-                System.out.println("Creando...");
-                break;
-
-            case 3:
-                //llamar a consulta insertar
-                System.out.println("Insertando...");
-                break;
-
-            case 0:
-                //vuelve al menú principal
-
+        } catch (SQLException e) {
+            System.out.println("No se han podido reiniciar las tablas :c");
+            e.printStackTrace();
         }
     }
 
-    private void menuNuevoPedido(){
-        //todo
+    /**
+     * Crea una nueva instancia de Pedido que se encarga de gestionar un nuevo pedido.
+     * Sin embargo, muestra un submenú que delegará a los métodos de la clase Pedido según
+     * la función que el usuario elija. Cuando las opciones 1 y 2 se realizan, vuelve a aparecer
+     * este mismo menú. Pero, para las opciones 3 y 4 vuelve al menú principal.
+     */
+    private void menuNuevoPedido() {
+        //todo revisar
+
+        Pedido pedido = new Pedido();
 
         boolean fin = false;
-        while(!fin){
+        while (!fin) {
             imprimir(menuNuevoPedidoStr); //imprimimos las opciones
 
             int opcion = pedirInput();  //pedimos la opción elegida y la guardamos
 
             switch (opcion) {
-                case 1:
+                case 1 -> {
                     //Añadir detalle del producto
                     System.out.println("Añadiendo detalle del producto...");
-                    break;
-
-                case 2:
+                    pedido.anadirDetalles(conexionSQL);
+                }
+                case 2 -> {
                     //Eliminar todos los detalles del producto
                     System.out.println("Eliminando detalles del producto...");
-
-                    break;
-
-                case 3:
+                    pedido.eliminarDetalles(conexionSQL);
+                }
+                case 3 -> {
                     //Cancelar pedido
                     System.out.println("Cancelando pedido...");
-                    fin = true;
-                    break;
-
-                case 4:
+                    pedido.cancelarPedido(conexionSQL);
+                    fin = true; //salimos del menú
+                }
+                case 4 -> {
                     //Finalizar pedido
                     System.out.println("Finalizando pedido...");
-                    fin = true;
-                    break;
+                    pedido.finalizarPedido(conexionSQL);
+                    fin = true; //salimos del menú
+                }
+                default -> System.out.println("Por favor, inserta un número válido");
             }
         }
     }
 
-    private void menuMostrar(){
+    /**
+     * Intenta llamar al método de ConsultasSQL que muestra las tablas.
+     * En caso de no poder, manda un mensaje de rechazo.
+     */
+    private void menuMostrar() {
         //todo
 
         imprimir(menuMostrarStr);
@@ -154,8 +169,10 @@ public class Menu {
         try {
             ResultSet resultSet = ConsultasSQL.mostrarTablas(conexionSQL);
 
-            while (resultSet.next()){
+            while (resultSet.next()) {
                 //todo encontrar una función que devuelva el número de columnas y hacer un for hasta el tamaño para mostrarlas
+                // tal vez crear un método que le pases el ResultSet y te imprima automáticamente las columnas
+
                 System.out.println(resultSet.getString(1) + "\t" + resultSet.getString(2));
             }
         } catch (SQLException e) {
