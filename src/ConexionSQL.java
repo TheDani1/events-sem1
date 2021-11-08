@@ -16,11 +16,11 @@ public class ConexionSQL {
             conexion = DriverManager.getConnection("jdbc:oracle:thin:@" + host + ":1521/" + nombre_bd, user, pass);
 
             st = conexion.createStatement();
-            System.out.print("-Conexion establecida :)- \n");
+            System.out.println("-Conexion establecida :)-");
             return true;
         }
         catch(Exception e){
-            System.out.print("-Conexion fallida :(- \n");
+            System.out.println("-Conexion fallida :(-");
             e.printStackTrace();
             return false;
         }
@@ -39,5 +39,13 @@ public class ConexionSQL {
             e.printStackTrace();
         }
 
+    }
+
+    public Connection getConexion() {
+        return conexion;
+    }
+
+    public Statement getSt() {
+        return st;
     }
 }

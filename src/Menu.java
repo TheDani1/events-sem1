@@ -1,3 +1,5 @@
+import java.sql.*;
+
 /**
  * Esta clase se encarga de hacer funcionar el menú grafico y permitir al usuario
  * navergar por las distintas opciones
@@ -6,7 +8,11 @@
 
 public class Menu {
 
-    //todo no se debería hacer un constructor?
+    private ConexionSQL conexionSQL;
+
+    public Menu(ConexionSQL conexionSQL) {
+        this.conexionSQL = conexionSQL;
+    }
 
     public void iniciarMenu(){
         imprimirMenu();             //imprimimos las opciones
@@ -53,5 +59,19 @@ public class Menu {
 
     private void menuMostrar(){
         //todo
+
+        System.out.println("MOSTRANDO TODO EL CONTENIDO DE LAS TABLAS:");
+
+        try {
+            ResultSet resultSet = ConsultasSQL.mostrarTablas(conexionSQL);
+
+            while (resultSet.next()){
+                //todo encontrar una función que devuelva el número de columnas y hacer un for hasta el tamaño para mostrarlas
+                System.out.println(resultSet.getString(1) + "\t" + resultSet.getString(2));
+            }
+        } catch (SQLException e) {
+            System.out.println("No se han podido encontrar las tablas :c");
+            e.printStackTrace();
+        }
     }
 }
