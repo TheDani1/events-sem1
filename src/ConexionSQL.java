@@ -11,17 +11,19 @@ public class ConexionSQL {
 
         try
         {
+            System.out.println("Conectando a la Base de Datos...");
+
             conexion = DriverManager.getConnection("jdbc:oracle:thin:@" + host + ":1521/" + nombre_bd, user, pass);
 
             st = conexion.createStatement();
-            System.out.print("-(Conexion genial)- ");
+            System.out.print("-Conexion establecida :)- \n");
             return true;
         }
         catch(Exception e){
+            System.out.print("-Conexion fallida :(- \n");
             e.printStackTrace();
             return false;
         }
-
     }
 
     public void desconectar() {
