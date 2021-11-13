@@ -39,7 +39,7 @@ public class ConsultasSQL {
      * @throws SQLException
      */
     public static ResultSet anadirDetalle(ConexionSQL conexionSQL) throws SQLException {
-        String selectSQL = ""; //todo HACER CONSULTA
+        String selectSQL = "INSERT INTO DetallePedido(Cpedido, Cproducto, Cantidad) VALUES(,,) WHERE Cproducto = Cproducto AND Cpedido = Cpedido"; //todo HACER CONSULTA
 
         return conexionSQL.getSt().executeQuery(selectSQL); //devuelve un ResultSet
     }
@@ -55,7 +55,7 @@ public class ConsultasSQL {
      * @throws SQLException
      */
     public static ResultSet eliminarDetalles(ConexionSQL conexionSQL) throws SQLException {
-        String selectSQL = ""; //todo HACER CONSULTA
+        String selectSQL = "DELETE * FROM DetallePedido where Cpedido = Cpedido"; //todo HACER CONSULTA
 
         return conexionSQL.getSt().executeQuery(selectSQL); //devuelve un ResultSet
     }
@@ -69,7 +69,7 @@ public class ConsultasSQL {
      * @throws SQLException
      */
     public static ResultSet cancelarPedido(ConexionSQL conexionSQL) throws SQLException {
-        String selectSQL = ""; //todo HACER CONSULTA (con un rollback)
+        String selectSQL = "START TRANSACTION DELETE * FROM Pedido, DetallePedido where Cpedido = Cpedido ROLLBACK TRANSACTION"; //todo HACER CONSULTA (con un rollback)
 
         return conexionSQL.getSt().executeQuery(selectSQL); //devuelve un ResultSet
     }
@@ -83,7 +83,7 @@ public class ConsultasSQL {
      * @throws SQLException
      */
     public static ResultSet finalizarPedido(ConexionSQL conexionSQL) throws SQLException {
-        String selectSQL = ""; //todo HACER CONSULTA (con un commit)
+        String selectSQL = "START TRANSACTION UPDATE  COMMIT TRANSACTION"; //todo HACER CONSULTA (con un commit)
 
         return conexionSQL.getSt().executeQuery(selectSQL); //devuelve un ResultSet
     }
@@ -115,7 +115,7 @@ public class ConsultasSQL {
                     Cpedido     int     NOT NULL,
                     Cproducto   int     NOT NULL,
                     Cantidad    int     NOT NULL,
-                    FOREIGN KEY (Cproducto) references stock(cproducto),
+                    FOREIGN KEY (Cproducto) references stock(Cproducto),
                     FOREIGN KEY (Cpedido) references pedido(Cpedido)
                 );
                 INSERT INTO Stock (Cproducto, Cantidad) VALUES (1, 5);
