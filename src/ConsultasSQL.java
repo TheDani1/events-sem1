@@ -39,7 +39,7 @@ public class ConsultasSQL {
      * @throws SQLException
      */
     public static ResultSet anadirDetalle(ConexionSQL conexionSQL) throws SQLException {
-        String selectSQL = "BEGIN;INSERT INTO DetallePedido(Cpedido, Cproducto, Cantidad) VALUES(,,) WHERE Cproducto = Cproducto AND Cpedido = Cpedido;COMMIT;"; //todo HACER CONSULTA
+        String selectSQL = "INSERT INTO DetallePedido(Cpedido, Cproducto, Cantidad) VALUES(,,) WHERE Cproducto = Cproducto AND Cpedido = Cpedido"; //todo HACER CONSULTA
 
         return conexionSQL.getSt().executeQuery(selectSQL); //devuelve un ResultSet
     }
@@ -69,7 +69,7 @@ public class ConsultasSQL {
      * @throws SQLException
      */
     public static ResultSet cancelarPedido(ConexionSQL conexionSQL) throws SQLException {
-        String selectSQL = "BEGIN;DELETE * FROM Pedido, DetallePedido where Cpedido = Cpedido;ROLLBACK;"; //todo HACER CONSULTA (con un rollback)
+        String selectSQL = "BEGIN DELETE * FROM Pedido, DetallePedido where Cpedido = Cpedido ROLLBACK"; //todo HACER CONSULTA (con un rollback)
 
         return conexionSQL.getSt().executeQuery(selectSQL); //devuelve un ResultSet
     }
@@ -83,7 +83,7 @@ public class ConsultasSQL {
      * @throws SQLException
      */
     public static ResultSet finalizarPedido(ConexionSQL conexionSQL) throws SQLException {
-        String selectSQL = "BEGIN;UPDATE;COMMIT;"; //todo HACER CONSULTA (con un commit)
+        String selectSQL = "BEGIN UPDATE COMMIT;"; //todo HACER CONSULTA (con un commit)
 
         return conexionSQL.getSt().executeQuery(selectSQL); //devuelve un ResultSet
     }
