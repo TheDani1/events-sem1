@@ -69,7 +69,7 @@ public class ConsultasSQL {
      * @throws SQLException
      */
     public static ResultSet cancelarPedido(ConexionSQL conexionSQL) throws SQLException {
-        String selectSQL = "BEGIN TRANSACTION;DELETE * FROM Pedido, DetallePedido where Cpedido = Cpedido ROLLBACK ROLLBACK;"; //todo HACER CONSULTA (con un rollback)
+        String selectSQL = "BEGIN TRANSACTION;DELETE * FROM Pedido, DetallePedido where Cpedido = Cpedido ROLLBACK;"; //todo HACER CONSULTA (con un rollback)
 
         return conexionSQL.getSt().executeQuery(selectSQL); //devuelve un ResultSet
     }
