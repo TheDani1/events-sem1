@@ -13,7 +13,7 @@ public class Main {
         //CONEXIÓN A LA BASE DE DATOS
         ConexionSQL conexionSQL = new ConexionSQL();
 
-        if (true/*conexionSQL.conectar(host, nombre_bd, user, pass)*/) { //todo quitar para comprobar que se establece la conexión
+        if (conexionSQL.conectar(host, nombre_bd, user, pass)) { //todo quitar para comprobar que se establece la conexión
 
             //LANZAMIENTO DEL MENÚ
             Menu menu = new Menu(conexionSQL); //creamos el menú con la conexión y el statement

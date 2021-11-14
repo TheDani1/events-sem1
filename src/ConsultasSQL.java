@@ -96,40 +96,46 @@ public class ConsultasSQL {
      * @return ResultSet
      * @throws SQLException
      */
-    public static ResultSet reiniciarTablas(ConexionSQL conexionSQL) throws SQLException {
-        String selectSQL = //todo revisar si esto está bien
-            """
-                DROP TABLE Stock;
-                DROP TABLE Pedido;
-                DROP TABLE DetallePedido;
-                CREATE TABLE Stock (
-                    Cproducto   int     PRIMARY KEY,
-                    Cantidad    int     NOT NULL
-                );
-                CREATE TABLE Pedido(
-                    Cpedido     int     PRIMARY KEY,
-                    Ccliente    int     NOT NULL,
-                    fechaPedido DATE    NOT NULL
-                );
-                CREATE TABLE DetallePedido (
-                    Cpedido     int     NOT NULL,
-                    Cproducto   int     NOT NULL,
-                    Cantidad    int     NOT NULL,
-                    FOREIGN KEY (Cproducto) references stock(Cproducto),
-                    FOREIGN KEY (Cpedido) references pedido(Cpedido)
-                );
-                INSERT INTO Stock (Cproducto, Cantidad) VALUES (1, 5);
-                INSERT INTO Stock (Cproducto, Cantidad) VALUES (2, 5);
-                INSERT INTO Stock (Cproducto, Cantidad) VALUES (3, 5);
-                INSERT INTO Stock (Cproducto, Cantidad) VALUES (4, 5);
-                INSERT INTO Stock (Cproducto, Cantidad) VALUES (5, 5);
-                INSERT INTO Stock (Cproducto, Cantidad) VALUES (6, 5);
-                INSERT INTO Stock (Cproducto, Cantidad) VALUES (7, 5);
-                INSERT INTO Stock (Cproducto, Cantidad) VALUES (8, 5);
-                INSERT INTO Stock (Cproducto, Cantidad) VALUES (9, 5);
-                INSERT INTO Stock (Cproducto, Cantidad) VALUES (10, 5);""";
+    public static void reiniciarTablas(ConexionSQL conexionSQL) throws SQLException {
+        String selectSQL = null;  //todo revisar si esto está bien
+        try {
+            selectSQL="DROP TABLE DetallePedido";
+            conexionSQL.getSt().executeUpdate(selectSQL);
+            selectSQL="DROP TABLE Stock";
+            conexionSQL.getSt().executeUpdate(selectSQL);
+            selectSQL="DROP TABLE Pedido";
+            conexionSQL.getSt().executeUpdate(selectSQL);
+        }
+        catch(Exception e){
+            System.out.println("No se han podido borrar las tablas ya que no estaban creadas");
+        }
+        selectSQL="CREATE TABLE Stock(Cproducto int PRIMARY KEY, Cantidad int NOT NULL)";
+        conexionSQL.getSt().executeUpdate(selectSQL);
+        selectSQL="CREATE TABLE Pedido(Cpedido int PRIMARY KEY, Ccliente int NOT NULL, fechaPedido DATE NOT NULL)";
+        conexionSQL.getSt().executeUpdate(selectSQL);
+        selectSQL="CREATE TABLE DetallePedido (Cpedido int NOT NULL, Cproducto int NOT NULL, Cantidad int NOT NULL, FOREIGN KEY (Cproducto) references stock(Cproducto), FOREIGN KEY (Cpedido) references pedido(Cpedido))";
+        conexionSQL.getSt().executeUpdate(selectSQL);
 
-        return conexionSQL.getSt().executeQuery(selectSQL); //devuelve un ResultSet
+        selectSQL="INSERT INTO Stock (Cproducto, Cantidad) VALUES (1, 5)";
+        conexionSQL.getSt().executeUpdate(selectSQL);
+        selectSQL="INSERT INTO Stock (Cproducto, Cantidad) VALUES (2, 5)";
+        conexionSQL.getSt().executeUpdate(selectSQL);
+        selectSQL="INSERT INTO Stock (Cproducto, Cantidad) VALUES (3, 5)";
+        conexionSQL.getSt().executeUpdate(selectSQL);
+        selectSQL="INSERT INTO Stock (Cproducto, Cantidad) VALUES (4, 5)";
+        conexionSQL.getSt().executeUpdate(selectSQL);
+        selectSQL="INSERT INTO Stock (Cproducto, Cantidad) VALUES (5, 5)";
+        conexionSQL.getSt().executeUpdate(selectSQL);
+        selectSQL="INSERT INTO Stock (Cproducto, Cantidad) VALUES (6, 5)";
+        conexionSQL.getSt().executeUpdate(selectSQL);
+        selectSQL="INSERT INTO Stock (Cproducto, Cantidad) VALUES (7, 5)";
+        conexionSQL.getSt().executeUpdate(selectSQL);
+        selectSQL="INSERT INTO Stock (Cproducto, Cantidad) VALUES (8, 5)";
+        conexionSQL.getSt().executeUpdate(selectSQL);
+        selectSQL="INSERT INTO Stock (Cproducto, Cantidad) VALUES (9, 5)";
+        conexionSQL.getSt().executeUpdate(selectSQL);
+        selectSQL="INSERT INTO Stock (Cproducto, Cantidad) VALUES (10, 5)";
+        conexionSQL.getSt().executeUpdate(selectSQL);
     }
 
 }

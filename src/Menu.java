@@ -103,7 +103,7 @@ public class Menu {
         imprimir(menuBorrarCrearStr);
 
         try {
-            ResultSet resultSet = ConsultasSQL.reiniciarTablas(conexionSQL);
+            ConsultasSQL.reiniciarTablas(conexionSQL);
             //todo asegurarse de que no se necesita el resultSet porque no hay que mostrar nada por pantalla
 
         } catch (SQLException e) {
