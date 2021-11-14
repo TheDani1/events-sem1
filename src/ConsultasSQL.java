@@ -109,7 +109,6 @@ public class ConsultasSQL {
      */
     public static void finalizarPedido(ConexionSQL conexionSQL) throws SQLException {
         conexionSQL.getConexion().commit();
-        conexionSQL.getConexion().commit();
         System.out.println("El pedido se ha finalizado.");
     }
 
