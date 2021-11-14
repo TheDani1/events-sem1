@@ -1,5 +1,5 @@
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
+import java.util.Scanner;
 
 public class Pedido {
 
@@ -8,11 +8,35 @@ public class Pedido {
         y lo inserte en la base de datos*/
 
 
-    private int Ccliente; //debería incrementarse cada vez que se hace un pedido
-    private int Cpedido;  //debería recoger una ID de usuario del user de la base de datos?
+    private String Ccliente; //debería incrementarse cada vez que se hace un pedido
+    private String Cpedido;  //debería recoger una ID de usuario del user de la base de datos?
     private String fecha; //debería coger la fecha y la hora de hoy, sería algo de java.time.LocalDate.now()
+    private Savepoint empieza_pedido;
+    private Savepoint empieza_detalle;
 
-    ResultSet resultSet = null; //todo revisar si se usa para mostrar por pantalla resultados (lo mismo no se necesita)
+    /**
+     * Empieza a crear un nuevo pedido, el usuario debe introducir los datos del pedido
+     * (Cpedido, Ccliente, fecha), creamos dos savepoint para que el usuario
+     * puede cancelar el pedido o quitar los detalles que ha insertado.
+     *
+     * @param conex Instancia de la conexión a la BD
+     */
+    public void inicialNuevoPedido(ConexionSQL conex) throws SQLException {
+        empieza_pedido= conex.getConexion().setSavepoint("Empieza");
+
+        Scanner entrada = new Scanner(System.in);
+        System.out.println("Introduzca el codigo del pedido");
+        entrada = new Scanner(System.in);
+        Cpedido = entrada.nextLine();
+        System.out.println("Introduzca el codigo del cliente");
+        entrada = new Scanner(System.in);
+        Ccliente = entrada.nextLine();
+        System.out.println("Introduzca la fecha con el siguiente formato YYYY/MM/DD");
+        fecha = entrada.nextLine();
+
+        conex.getSt().executeUpdate("INSERT INTO Pedido (Cpedido,Ccliente,Fechapedido) VALUES ("+Cpedido+", "+Ccliente+", TO_DATE('"+fecha+"','YYYY-MM-DD'))");
+        empieza_detalle= conex.getConexion().setSavepoint("Empieza_detalles");
+    }
 
     /**
      * Intenta llamar a la consultaSQL que añade los detalles de artículo y cantidad
@@ -23,13 +47,15 @@ public class Pedido {
      */
     public void anadirDetalles(ConexionSQL conex) {
         try {
-            resultSet = ConsultasSQL.anadirDetalle(conex); //todo aquí hay que pedir y meter parámetros de entrada
+            ConsultasSQL.anadirDetalle(conex, this);
 
         } catch (SQLException e) {
             System.out.println("No se han podido añadir los detalles :c");
             e.printStackTrace();
         }
     }
+
+    public String getCpedido(){ return Cpedido; }
 
     /**
      * Intenta llamar a la ConsultaSQL que elimina los detalles de pedido que
@@ -40,7 +66,7 @@ public class Pedido {
      */
     public void eliminarDetalles(ConexionSQL conex) {
         try {
-            resultSet = ConsultasSQL.eliminarDetalles(conex); //todo simplemente borrar los detalles
+            ConsultasSQL.eliminarDetalles(conex, empieza_detalle);
 
         } catch (SQLException e) {
             System.out.println("No se han podido eliminar los detalles :c");
@@ -56,8 +82,7 @@ public class Pedido {
      */
     public void cancelarPedido(ConexionSQL conex) {
         try {
-            resultSet = ConsultasSQL.cancelarPedido(conex); //todo cancelar el pedido
-
+            ConsultasSQL.cancelarPedido(conex, empieza_pedido);
         } catch (SQLException e) {
             System.out.println("No se han podido cancelar el pedido :c");
             e.printStackTrace();
@@ -72,7 +97,7 @@ public class Pedido {
      */
     public void finalizarPedido(ConexionSQL conex) {
         try {
-            resultSet = ConsultasSQL.finalizarPedido(conex); //todo confirmar el pedido
+            ConsultasSQL.finalizarPedido(conex);
 
         } catch (SQLException e) {
             System.out.println("No se han podido finalozar el pedido :c");

@@ -25,6 +25,7 @@ public class ConexionSQL {
             conexion = DriverManager.getConnection("jdbc:oracle:thin:@" + host + ":1521/" + nombre_bd, user, pass);
 
             st = conexion.createStatement();
+
             System.out.println("-Conexion establecida :)-");
             return true;
         } catch (Exception e) {

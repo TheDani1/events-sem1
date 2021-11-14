@@ -50,7 +50,7 @@ public class Menu {
      * Muestra el display del Menú Principal para que el usuario sepa qué opciones
      * tiene. Según la que éste elija, le llevará a otros submenús o funcionalidades.
      */
-    public void iniciarMenu() {
+    public void iniciarMenu() throws SQLException {
         boolean fin = false;
         while (!fin) {
 
@@ -118,10 +118,12 @@ public class Menu {
      * la función que el usuario elija. Cuando las opciones 1 y 2 se realizan, vuelve a aparecer
      * este mismo menú. Pero, para las opciones 3 y 4 vuelve al menú principal.
      */
-    private void menuNuevoPedido() {
+    private void menuNuevoPedido() throws SQLException {
         //todo revisar
 
         Pedido pedido = new Pedido();
+
+        pedido.inicialNuevoPedido(conexionSQL);
 
         boolean fin = false;
         while (!fin) {

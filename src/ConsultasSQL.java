@@ -1,5 +1,5 @@
-import javax.xml.transform.Result;
 import java.sql.*;
+import java.util.Scanner;
 
 /**
  * Esta clase se va a encargar de recopilar métodos que hagan consultas SQL.
@@ -9,7 +9,7 @@ import java.sql.*;
  * <p>
  * IMPORTANTE: Esta clase tiene sus métodos static porque no hay que crear una instancia para llamar a sus métodos
  *
- * @author Javier Florido Cartolano, //todo añadirse quien vaya escribiendo código
+ * @author Javier Florido Cartolano, Yang Lin, //todo añadirse quien vaya escribiendo código
  */
 
 public class ConsultasSQL {
@@ -35,57 +35,82 @@ public class ConsultasSQL {
      * //todo resumir lo que hace la consulta SQL
      *
      * @param conexionSQL Instancia de la conexión a la BD
-     * @return ResultSet
+     * @param pedido Instancia para que podemos almacenar los detalles en mismo pedido
      * @throws SQLException
      */
-    public static ResultSet anadirDetalle(ConexionSQL conexionSQL) throws SQLException {
-        String selectSQL = "INSERT INTO DetallePedido(Cpedido, Cproducto, Cantidad) VALUES(,,) WHERE Cproducto = Cproducto AND Cpedido = Cpedido"; //todo HACER CONSULTA
+    public static void  anadirDetalle(ConexionSQL conexionSQL, Pedido pedido) throws SQLException {
+        System.out.println("Introduzca el codigo del producto");
+        Scanner entrada = new Scanner(System.in);
+        String cproducto = entrada.nextLine();
+        System.out.println("Introduzca la cantidad del producto");
+        entrada = new Scanner(System.in);
+        int ccantidad = entrada.nextInt();
 
-        return conexionSQL.getSt().executeQuery(selectSQL); //devuelve un ResultSet
+        String instruccion = "SELECT cantidad FROM Stock WHERE cproducto="+cproducto;
+        ResultSet ProductoElegido = conexionSQL.getSt().executeQuery(instruccion);
+
+        if(ProductoElegido.next() != false)
+        {
+            int cantidadproducto = ProductoElegido.getInt(1);
+            if(cantidadproducto >= ccantidad)
+            {
+                cantidadproducto = cantidadproducto - ccantidad;
+                instruccion = "UPDATE Stock SET Cantidad="+cantidadproducto+"WHERE cproducto="+cproducto;
+                conexionSQL.getSt().executeUpdate(instruccion);
+                instruccion = "INSERT INTO DetallePedido (CPedido, CProducto, Cantidad) VALUES ("+pedido.getCpedido()+", "+cproducto+","+ccantidad+")";
+                conexionSQL.getSt().executeUpdate(instruccion);
+                System.out.println("Detalle pedido realizado");
+            }
+            else
+            {
+                System.out.println("No hay suficiente cantidad de producto en el stock.");
+            }
+        }
+        else
+        {
+            System.out.println("Este producto no existe.");
+        }
     }
 
     /**
      * Elimina todos los detalles de pedido que se han insertado en
      * la tabla Detalle-Pedido para el pedido ACTUAL (pero no el
      * pedido en la tabla Pedidos).
-     * //todo resumir lo que hace la consulta SQL
+     * Usando la funcion rollback() para volver al punto antes de crear los detalles.
      *
      * @param conexionSQL Instancia de la conexión a la BD
-     * @return ResultSet
+     * @param comienzo_detalle Sevepoint que vamos a recuperar
      * @throws SQLException
      */
-    public static ResultSet eliminarDetalles(ConexionSQL conexionSQL) throws SQLException {
-        String selectSQL = "DELETE * FROM DetallePedido where Cpedido = Cpedido"; //todo HACER CONSULTA
-
-        return conexionSQL.getSt().executeQuery(selectSQL); //devuelve un ResultSet
+    public static void eliminarDetalles(ConexionSQL conexionSQL, Savepoint comienzo_detalle) throws SQLException {
+        conexionSQL.getConexion().rollback(comienzo_detalle);
+        System.out.println("Los detalles no se han añadido.");
     }
 
     /**
      * Elimina el pedido y todos sus detalles.
-     * //todo resumir lo que hace la consulta SQL
+     * Usando la funcion rollback() para volver al punto antes de crear el pedido.
      *
      * @param conexionSQL Instancia de la conexión a la BD
-     * @return ResultSet
+     * @param comienzo Sevepoint que vamos a recuperar
      * @throws SQLException
      */
-    public static ResultSet cancelarPedido(ConexionSQL conexionSQL) throws SQLException {
-        String selectSQL = "BEGIN DELETE * FROM Pedido, DetallePedido where Cpedido = Cpedido ROLLBACK"; //todo HACER CONSULTA (con un rollback)
-
-        return conexionSQL.getSt().executeQuery(selectSQL); //devuelve un ResultSet
+    public static void cancelarPedido(ConexionSQL conexionSQL, Savepoint comienzo) throws SQLException {
+        conexionSQL.getConexion().rollback(comienzo);
+        System.out.println("El pedido se ha cancelado.");
     }
 
     /**
      * Hace consistente el pedido y aplica los cambios de forma permanente.
-     * //todo resumir lo que hace la consulta SQL
+     * Usando la funcion commit() para aplicar los cambios.
      *
      * @param conexionSQL Instancia de la conexión a la BD
-     * @return ResultSet
      * @throws SQLException
      */
-    public static ResultSet finalizarPedido(ConexionSQL conexionSQL) throws SQLException {
-        String selectSQL = "BEGIN UPDATE COMMIT;"; //todo HACER CONSULTA (con un commit)
-
-        return conexionSQL.getSt().executeQuery(selectSQL); //devuelve un ResultSet
+    public static void finalizarPedido(ConexionSQL conexionSQL) throws SQLException {
+        conexionSQL.getConexion().commit();
+        conexionSQL.getConexion().commit();
+        System.out.println("El pedido se ha finalizado.");
     }
 
     /**
@@ -93,11 +118,10 @@ public class ConsultasSQL {
      * 10 tuplas por defecto. Básicamente, reinicia las tablas.
      *
      * @param conexionSQL Instancia de la conexión a la BD
-     * @return ResultSet
      * @throws SQLException
      */
     public static void reiniciarTablas(ConexionSQL conexionSQL) throws SQLException {
-        String selectSQL = null;  //todo revisar si esto está bien
+        String selectSQL = null;
         try {
             selectSQL="DROP TABLE DetallePedido";
             conexionSQL.getSt().executeUpdate(selectSQL);
