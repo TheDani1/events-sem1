@@ -9,7 +9,7 @@ import java.util.Scanner;
  * <p>
  * IMPORTANTE: Esta clase tiene sus métodos static porque no hay que crear una instancia para llamar a sus métodos
  *
- * @author Javier Florido Cartolano, Yang Lin, //todo añadirse quien vaya escribiendo código
+ * @author Javier Florido Cartolano, Yang Lin, Pablo Fernández Gallardo //todo añadirse quien vaya escribiendo código
  */
 
 public class ConsultasSQL {
