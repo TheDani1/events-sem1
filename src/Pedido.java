@@ -3,11 +3,11 @@ import java.util.Scanner;
 
 public class Pedido {
 
-    private String Ccliente; //debería incrementarse cada vez que se hace un pedido
-    private String Cpedido;  //debería recoger una ID de usuario del user de la base de datos?
-    private String fecha; //debería coger la fecha y la hora de hoy, sería algo de java.time.LocalDate.now()
-    private Savepoint empieza_pedido;
-    private Savepoint empieza_detalle;
+    private String Ccliente;
+    private String Cpedido;
+    private String fecha;
+    private Savepoint empieza_pedido; //Sevepoint que genera antes de crear pedido
+    private Savepoint empieza_detalle; //Sevepoint que genera antes de añadir los detalles
 
     /**
      * Empieza a crear un nuevo pedido, el usuario debe introducir los datos del pedido
