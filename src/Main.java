@@ -1,11 +1,10 @@
 import java.sql.*;
+import java.util.Scanner;
 
 public class Main {
 
     static final String host = "oracle0.ugr.es";
     static final String nombre_bd = "practbd.oracle0.ugr.es";
-    static final String user = "x1786855";
-    static final String pass = "x1786855";
 
     public static void main(String[] args) throws SQLException {
 
@@ -14,6 +13,11 @@ public class Main {
 
         //CONEXIÓN A LA BASE DE DATOS
         ConexionSQL conexionSQL = new ConexionSQL();
+
+        System.out.println("Introduzca su usuario: ");
+        Scanner entrada = new Scanner(System.in);
+        String user = entrada.nextLine();
+        String pass = user;
 
         if (conexionSQL.conectar(host, nombre_bd, user, pass)) {
 

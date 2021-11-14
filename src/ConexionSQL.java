@@ -6,8 +6,6 @@ public class ConexionSQL {
     private Connection conexion;
     private Statement st;
 
-    //DriverManager.registerDriver( new oracle.jdbc.driver.OracleDriver() );
-
     /**
      * Intenta conectarse a la Base de Datos
      *

@@ -3,11 +3,6 @@ import java.util.Scanner;
 
 public class Pedido {
 
-    /*todo revisar, esto tiene que hacer la consulta y preguntar qué detalles se quieren meter, por lo que va a necesitar más parámetros de entrada
-        por ejemplo: número del pedido, por lo que, por cada pedido que se haga, habrá que hacer un contador que sume cada pedido hecho
-        y lo inserte en la base de datos*/
-
-
     private String Ccliente; //debería incrementarse cada vez que se hace un pedido
     private String Cpedido;  //debería recoger una ID de usuario del user de la base de datos?
     private String fecha; //debería coger la fecha y la hora de hoy, sería algo de java.time.LocalDate.now()
@@ -34,7 +29,12 @@ public class Pedido {
         System.out.println("Introduzca la fecha con el siguiente formato YYYY/MM/DD");
         fecha = entrada.nextLine();
 
-        conex.getSt().executeUpdate("INSERT INTO Pedido (Cpedido,Ccliente,Fechapedido) VALUES ("+Cpedido+", "+Ccliente+", TO_DATE('"+fecha+"','YYYY-MM-DD'))");
+        try{
+            conex.getSt().executeUpdate("INSERT INTO Pedido (Cpedido,Ccliente,Fechapedido) VALUES ("+Cpedido+", "+Ccliente+", TO_DATE('"+fecha+"','YYYY-MM-DD'))");
+        }
+        catch(Exception e){
+            System.out.println("El pedido ya existe.");
+        }
         empieza_detalle= conex.getConexion().setSavepoint("Empieza_detalles");
     }
 

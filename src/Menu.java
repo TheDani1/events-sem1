@@ -75,8 +75,6 @@ public class Menu {
      */
     private int pedirInput() {
         Scanner input = new Scanner(System.in);
-
-        //todo hacer un sistema de try-catch que detecte que se inserta un número y no cualquier otro caracter
         int num = input.nextInt();
 
         return num;
@@ -98,14 +96,11 @@ public class Menu {
      * En caso de no poder, manda un mensaje de rechazo.
      */
     private void menuBorrarCrear() {
-        //todo revisar
 
         imprimir(menuBorrarCrearStr);
 
         try {
             ConsultasSQL.reiniciarTablas(conexionSQL);
-            //todo asegurarse de que no se necesita el resultSet porque no hay que mostrar nada por pantalla
-
         } catch (SQLException e) {
             System.out.println("No se han podido reiniciar las tablas :c");
             e.printStackTrace();
@@ -119,7 +114,6 @@ public class Menu {
      * este mismo menú. Pero, para las opciones 3 y 4 vuelve al menú principal.
      */
     private void menuNuevoPedido() throws SQLException {
-        //todo revisar
 
         Pedido pedido = new Pedido();
 
@@ -164,19 +158,12 @@ public class Menu {
      * En caso de no poder, manda un mensaje de rechazo.
      */
     private void menuMostrar() {
-        //todo
 
         imprimir(menuMostrarStr);
 
         try {
-            ResultSet resultSet = ConsultasSQL.mostrarTablas(conexionSQL);
+            ConsultasSQL.mostrarTablas(conexionSQL);
 
-            while (resultSet.next()) {
-                //todo encontrar una función que devuelva el número de columnas y hacer un for hasta el tamaño para mostrarlas
-                // tal vez crear un método que le pases el ResultSet y te imprima automáticamente las columnas
-
-                System.out.println(resultSet.getString(1) + "\t" + resultSet.getString(2));
-            }
         } catch (SQLException e) {
             System.out.println("No se han podido encontrar las tablas :c");
             e.printStackTrace();

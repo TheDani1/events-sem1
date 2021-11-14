@@ -15,24 +15,60 @@ import java.util.Scanner;
 public class ConsultasSQL {
 
     /**
-     * Devuelve un ResultSet con todas las tablas de la Base de Datos
-     * //todo resumir lo que hace la consulta SQL
+     * Devuelve un ResultSet con las tablas de la Base de Datos y mostrar en la pantalla.
+     * Una vez que leamos una tabla, si no está vacía mostrarla, si está vacía, mostramos
+     * el mensaje.
      *
      * @param conexionSQL Instancia de la conexión a la BD
-     * @return ResultSet
      * @throws SQLException
      */
-    public static ResultSet mostrarTablas(ConexionSQL conexionSQL) throws SQLException {
-        String selectSQL = "SELECT * FROM USER_TABLES"; //todo revisar si esto está bien, tal vez haya que hacer 3 select
+    public static void mostrarTablas(ConexionSQL conexionSQL) throws SQLException {
+        String selectSQL = "SELECT * FROM Stock";
+        ResultSet tablas= conexionSQL.getSt().executeQuery(selectSQL);
+        if(tablas.next() == false){
+            System.out.println("Tabla de Stock esta en vacío.");
+        }
+        else{
+            System.out.println("Tabla de Stock (Cproducto, Cantidad): ");
+            while (tablas.next()) {
+                System.out.println(tablas.getString(1) + "\t" + tablas.getString(2));
+            }
+        }
 
-        return conexionSQL.getSt().executeQuery(selectSQL); //devuelve un ResultSet
+        selectSQL = "SELECT * FROM DetallePedido";
+        tablas= conexionSQL.getSt().executeQuery(selectSQL);
+        if(tablas.next() == false){
+            System.out.println("Tabla de DetallePedido esta en vacío.");
+        }
+        else{
+            System.out.println("Tabla de DetallePedido (Cproducto, Ccliente, Fecha_Pedido): ");
+            while (tablas.next()) {
+                System.out.println(tablas.getString(1) + "\t" + tablas.getString(2) + "\t" + tablas.getString(3));
+            }
+        }
+
+        selectSQL = "SELECT * FROM Pedido";
+        tablas= conexionSQL.getSt().executeQuery(selectSQL);
+        if(tablas.next() == false){
+            System.out.println("Tabla de Pedido esta en vacío.");
+        }
+        else{
+            System.out.println("Tabla de Pedido (Cpedido, Cproducto, Cantidad): ");
+            while (tablas.next()) {
+                System.out.println(tablas.getString(1) + "\t" + tablas.getString(2) + "\t" + tablas.getString(3));
+            }
+        }
+
     }
 
     /**
      * Captura los detalles de un artículo y cantidad, y realiza la
      * inserción correspondiente en la tabla Detalle-Pedido.
      * Además, actualiza el Stock (si hay)
-     * //todo resumir lo que hace la consulta SQL
+     * Leamos el código de producto y la cantidad que introduzca
+     * el usuario, comprobamos si existe el producto y si la cantidad
+     * que pide sobrepasa la que hay en Stock muestra un mensaje,
+     * en caso que no, podemos añadirla en la tabla DetallePedido.
      *
      * @param conexionSQL Instancia de la conexión a la BD
      * @param pedido Instancia para que podemos almacenar los detalles en mismo pedido
@@ -52,10 +88,10 @@ public class ConsultasSQL {
         if(ProductoElegido.next() != false)
         {
             int cantidadproducto = ProductoElegido.getInt(1);
-            if(cantidadproducto >= ccantidad)
+            if(cantidadproducto > ccantidad)
             {
                 cantidadproducto = cantidadproducto - ccantidad;
-                instruccion = "UPDATE Stock SET Cantidad="+cantidadproducto+"WHERE cproducto="+cproducto;
+                instruccion = "UPDATE Stock SET Cantidad="+cantidadproducto+" WHERE cproducto="+cproducto;
                 conexionSQL.getSt().executeUpdate(instruccion);
                 instruccion = "INSERT INTO DetallePedido (CPedido, CProducto, Cantidad) VALUES ("+pedido.getCpedido()+", "+cproducto+","+ccantidad+")";
                 conexionSQL.getSt().executeUpdate(instruccion);
@@ -76,7 +112,7 @@ public class ConsultasSQL {
      * Elimina todos los detalles de pedido que se han insertado en
      * la tabla Detalle-Pedido para el pedido ACTUAL (pero no el
      * pedido en la tabla Pedidos).
-     * Usando la funcion rollback() para volver al punto antes de crear los detalles.
+     * Usando la función rollback() para volver al punto antes de crear los detalles.
      *
      * @param conexionSQL Instancia de la conexión a la BD
      * @param comienzo_detalle Sevepoint que vamos a recuperar
@@ -89,7 +125,7 @@ public class ConsultasSQL {
 
     /**
      * Elimina el pedido y todos sus detalles.
-     * Usando la funcion rollback() para volver al punto antes de crear el pedido.
+     * Usando la función rollback() para volver al punto antes de crear el pedido.
      *
      * @param conexionSQL Instancia de la conexión a la BD
      * @param comienzo Sevepoint que vamos a recuperar
@@ -102,7 +138,7 @@ public class ConsultasSQL {
 
     /**
      * Hace consistente el pedido y aplica los cambios de forma permanente.
-     * Usando la funcion commit() para aplicar los cambios.
+     * Usando la función commit() para aplicar los cambios.
      *
      * @param conexionSQL Instancia de la conexión a la BD
      * @throws SQLException
