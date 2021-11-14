@@ -22,10 +22,43 @@ public class ConsultasSQL {
      * @return ResultSet
      * @throws SQLException
      */
-    public static ResultSet mostrarTablas(ConexionSQL conexionSQL) throws SQLException {
-        String selectSQL = "SELECT * FROM USER_TABLES"; //todo revisar si esto está bien, tal vez haya que hacer 3 select
+    public static void mostrarTablas(ConexionSQL conexionSQL) throws SQLException {
+        String selectSQL = "SELECT * FROM Stock";
+        ResultSet tablas= conexionSQL.getSt().executeQuery(selectSQL);
+        if(tablas.next() == false){
+            System.out.println("Tabla de Stock esta en vacío.");
+        }
+        else{
+            System.out.println("Tabla de Stock (Cproducto, Cantidad): ");
+            while (tablas.next()) {
+                System.out.println(tablas.getString(1) + "\t" + tablas.getString(2));
+            }
+        }
 
-        return conexionSQL.getSt().executeQuery(selectSQL); //devuelve un ResultSet
+        selectSQL = "SELECT * FROM DetallePedido";
+        tablas= conexionSQL.getSt().executeQuery(selectSQL);
+        if(tablas.next() == false){
+            System.out.println("Tabla de DetallePedido esta en vacío.");
+        }
+        else{
+            System.out.println("Tabla de DetallePedido (Cproducto, Ccliente, Fecha_Pedido): ");
+            while (tablas.next()) {
+                System.out.println(tablas.getString(1) + "\t" + tablas.getString(2) + "\t" + tablas.getString(3));
+            }
+        }
+
+        selectSQL = "SELECT * FROM Pedido";
+        tablas= conexionSQL.getSt().executeQuery(selectSQL);
+        if(tablas.next() == false){
+            System.out.println("Tabla de Pedido esta en vacío.");
+        }
+        else{
+            System.out.println("Tabla de Pedido (Cpedido, Cproducto, Cantidad): ");
+            while (tablas.next()) {
+                System.out.println(tablas.getString(1) + "\t" + tablas.getString(2) + "\t" + tablas.getString(3));
+            }
+        }
+
     }
 
     /**
@@ -55,7 +88,7 @@ public class ConsultasSQL {
             if(cantidadproducto >= ccantidad)
             {
                 cantidadproducto = cantidadproducto - ccantidad;
-                instruccion = "UPDATE Stock SET Cantidad="+cantidadproducto+"WHERE cproducto="+cproducto;
+                instruccion = "UPDATE Stock SET Cantidad="+cantidadproducto+" WHERE cproducto="+cproducto;
                 conexionSQL.getSt().executeUpdate(instruccion);
                 instruccion = "INSERT INTO DetallePedido (CPedido, CProducto, Cantidad) VALUES ("+pedido.getCpedido()+", "+cproducto+","+ccantidad+")";
                 conexionSQL.getSt().executeUpdate(instruccion);

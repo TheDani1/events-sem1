@@ -169,14 +169,8 @@ public class Menu {
         imprimir(menuMostrarStr);
 
         try {
-            ResultSet resultSet = ConsultasSQL.mostrarTablas(conexionSQL);
+            ConsultasSQL.mostrarTablas(conexionSQL);
 
-            while (resultSet.next()) {
-                //todo encontrar una función que devuelva el número de columnas y hacer un for hasta el tamaño para mostrarlas
-                // tal vez crear un método que le pases el ResultSet y te imprima automáticamente las columnas
-
-                System.out.println(resultSet.getString(1) + "\t" + resultSet.getString(2));
-            }
         } catch (SQLException e) {
             System.out.println("No se han podido encontrar las tablas :c");
             e.printStackTrace();
